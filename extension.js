@@ -17,7 +17,7 @@ const folder_open_icon = 'folder-open';
 
 const FolderMenuItem = new Lang.Class({
   Name: 'FolderMenuItem',
-  Extends: PopupMenu.PopupSeparatorMenuItem,
+  Extends: PopupMenu.PopupMenuItem,
   _init: function (text) {
     this.parent(text);
     let icon = new St.Icon({ icon_name: folder_icon, icon_size: 24 });
