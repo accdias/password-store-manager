@@ -1,0 +1,8 @@
+{
+	"description": "Access your password store from Gnome Shell",
+	"name": "Password Store Manager",
+	"shell-version": [ "3.20" ],
+	"url": "https://github.com/accdias/password-store-manager",
+	"uuid": "passwordstore@accdias.gmail.com",
+	"version": 0.1
+}
