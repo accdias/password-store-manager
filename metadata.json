@@ -3,6 +3,6 @@
 	"name": "Password Store Manager",
 	"shell-version": [ "3.20" ],
 	"url": "https://github.com/accdias/password-store-manager",
-	"uuid": "passwordstore@accdias.gmail.com",
-	"version": 0.1
+	"uuid": "password-store-manager@accdias",
+	"version": 0.2
 }
