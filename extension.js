@@ -15,32 +15,12 @@ const key_icon = 'dialog-password';
 const folder_icon = 'folder';
 const folder_open_icon = 'folder-open';
 
-const FolderMenuItem = new Lang.Class({
-  Name: 'FolderMenuItem',
+const MenuItem = new Lang.Class({
+  Name: 'MenuItem',
   Extends: PopupMenu.PopupMenuItem,
-  _init: function (text) {
+  _init: function (icon, text) {
     this.parent(text);
-    let icon = new St.Icon({ icon_name: folder_icon, icon_size: 24 });
-    this.actor.insert_child_at_index(icon, 1);
-  },
-});
-
-const CurrentFolderMenuItem = new Lang.Class({
-  Name: 'CurrentFolderMenuItem',
-  Extends: PopupMenu.PopupSeparatorMenuItem,
-  _init: function (text) {
-    this.parent(text);
-    let icon = new St.Icon({ icon_name: folder_open_icon, icon_size: 24 });
-    this.actor.insert_child_at_index(icon, 1);
-  },
-});
-
-const KeyMenuItem = new Lang.Class({
-  Name: 'IconMenuItem',
-  Extends: PopupMenu.PopupMenuItem,
-  _init: function (text) {
-    this.parent(text);
-    let icon = new St.Icon({ icon_name: key_icon, icon_size: 24 });
+    let icon = new St.Icon({ icon_name: icon, icon_size: 24 });
     this.actor.insert_child_at_index(icon, 1);
   },
 });
@@ -67,29 +47,31 @@ const PasswordStoreManager = new Lang.Class({
 
     this.parent_dir = GLib.path_get_dirname(this.current_dir);
 
-    log("parent_dir: " + this.parent_dir);
-    log("current_dir: " + this.current_dir);
-    log("current_dir != parent_dir: " + (this.current_dir != this.parent_dir));
+    //log("parent_dir: " + this.parent_dir);
+    //log("current_dir: " + this.current_dir);
+    //log("current_dir != parent_dir: " + (this.current_dir != this.parent_dir));
 
     // Add an item to access the parent directory
     if (this.parent_dir != this.current_dir)
     {
-      let item = new FolderMenuItem('..');
+      let item = new MenuItem(folder_icon, '..');
       item.connect('activate', Lang.bind(this, function() {
         this.current_dir = this.parent_dir;
         this._draw_popup_menu();
       }));
 
       this.menu.addMenuItem(item);
-      this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
     }
 
     // Add an item to indicate the current directory if not root
     if (this.current_dir != '/')
     {
       // Current directory
-      //this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(GLib.path_get_basename(this.current_dir)));
-      this.menu.addMenuItem(new CurrentFolderMenuItem(GLib.path_get_basename(this.current_dir)));
+      let menu_entry = new MenuItem(folder_open_icon, GLib.path_get_basename(this.current_dir));
+      menu_entry.connect('activate', Lang.bind(this, function() {
+        this._draw_popup_menu();
+      }));
+      this.menu.addMenuItem(menu_entry);
     }
 
 		let files;
@@ -132,7 +114,7 @@ const PasswordStoreManager = new Lang.Class({
       if (folders.length > 0)
       {
         folders.sort().forEach(item => {
-          let menu_entry = new FolderMenuItem(item);
+          let menu_entry = new MenuItem(folder_icon, item);
           menu_entry.connect('activate', Lang.bind(this, function() {
             this.current_dir = GLib.build_filenamev([this.current_dir, item]);
             this._draw_popup_menu();
@@ -144,7 +126,7 @@ const PasswordStoreManager = new Lang.Class({
       if (keys.length > 0)
       {
         keys.sort().forEach(item => {
-          let menu_entry = new KeyMenuItem(item);
+          let menu_entry = new MenuItem(key_icon, item);
           menu_entry.connect('activate', Lang.bind(this, function() {
             let cmd2 = "pass -c " + GLib.build_filenamev([this.current_dir, item]);
             let out = GLib.spawn_command_line_async(cmd2);
